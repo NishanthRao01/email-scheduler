@@ -3,6 +3,7 @@ import express from "express";
 
 import { errorMiddleware } from "./middleware/error.middleware.ts";
 import { notFoundMiddleware } from "./middleware/not-found.middleware.ts";
+import emailRoutes from "./routes/email.routes.ts";
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.get("/health", (_req, res) => {
     message: "ReachInbox scheduler API is running",
   });
 });
+
+app.use("/api/emails", emailRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
