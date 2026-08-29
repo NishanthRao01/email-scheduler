@@ -9,7 +9,17 @@ export const scheduleEmailsController: RequestHandler = async (
   next,
 ) => {
   try {
-    const input = validateScheduleEmailInput(req.body);
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const input = validateScheduleEmailInput({
+      ...req.body,
+      userId: req.user.userId,
+    });
 
     const campaign = await scheduleEmails(input);
 
