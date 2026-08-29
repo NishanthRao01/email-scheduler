@@ -4,13 +4,15 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "dev:worker": "tsx watch src/worker.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "start:worker": "node dist/worker.js",
-    "seed": "tsx prisma/seed.ts"
-  },
+  "dev": "tsx watch src/server.ts",
+  "dev:worker": "tsx watch src/worker.ts",
+  "build": "tsc",
+  "start": "node dist/server.js",
+  "start:worker": "node dist/worker.js",
+  "seed": "tsx prisma/seed.ts",
+  "test:rate-limit": "tsx src/tests/rate-limiter.test.ts",
+  "test:delay-limit": "tsx src/tests/delay-limiter.test.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -22,12 +24,14 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "ioredis": "^6.0.0"
+    "ioredis": "^6.0.0",
+    "nodemailer": "^9.0.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.4.0",
+    "@types/nodemailer": "^8.0.1",
     "prisma": "^7.10.0",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
