@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.ts";
 import type { ScheduleEmailInput } from "../validators/email.validator.ts";
+import { scheduleEmailJob } from "./email.scheduler.service.ts";
 import { AppError } from "../utils/errors.ts";
 
 export const scheduleEmails = async (
@@ -41,6 +42,13 @@ export const scheduleEmails = async (
       emails: true,
     },
   });
+
+for (const email of campaign.emails) {
+  await scheduleEmailJob({
+    emailId: email.id,
+    scheduledAt: email.scheduledAt,
+  });
+}
 
   return campaign;
 };
