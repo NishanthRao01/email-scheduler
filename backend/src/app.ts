@@ -4,6 +4,7 @@ import express from "express";
 import { errorMiddleware } from "./middleware/error.middleware.ts";
 import { notFoundMiddleware } from "./middleware/not-found.middleware.ts";
 import emailRoutes from "./routes/email.routes.ts";
+import queueRoutes from "./routes/queue.routes.ts";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/emails", emailRoutes);
+app.use("/api/queue", queueRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
