@@ -7,6 +7,7 @@ import { workerConfig } from "../config/worker.ts";
 import { acquireHourlyLimit } from "../services/email-rate-limiter.service.ts";
 import { reserveSendSlot } from "../services/email-delay-limiter.service.ts";
 import { rateLimitConfig } from "../config/rate-limit.ts";
+import { sendHourlyLimitNotification } from "../services/slack.service.ts";
 import { prisma } from "../lib/prisma.ts";
 
 export const emailWorker = new Worker(
@@ -122,6 +123,18 @@ export const emailWorker = new Worker(
       nextHour.setUTCHours(
         nextHour.getUTCHours() + 1,
       );
+
+  try {
+    await sendHourlyLimitNotification({
+      userId: email.campaign.userId,
+      senderEmail: email.sender.email,
+    });
+  } catch (error) {
+    console.error(
+      `Failed to send Slack hourly-limit notification:`,
+      error,
+    );
+  }
 
       await prisma.email.update({
         where: {

@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.ts";
 import { slackOAuthConfig } from "../config/slack.ts";
+import { WebClient } from "@slack/web-api";
 
 export const getSlackAuthUrl = (state: string) => {
   const params = new URLSearchParams({
@@ -70,4 +71,42 @@ export const connectSlack = async (
     });
 
   return connection;
+};
+
+export const sendHourlyLimitNotification = async ({
+  userId,
+  senderEmail,
+}: {
+  userId: string;
+  senderEmail: string;
+}) => {
+  const connection =
+    await prisma.slackConnection.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+  if (!connection) {
+    console.log(
+      `Slack is not connected for user ${userId}.`,
+    );
+
+    return;
+  }
+
+  const slack = new WebClient(
+    connection.accessToken,
+  );
+
+  await slack.chat.postMessage({
+  channel: process.env.SLACK_NOTIFICATION_CHANNEL_ID!,
+  text:
+    `⚠️ Hourly email limit reached for sender ` +
+    `${senderEmail}. Remaining emails will be retried in the next hour.`,
+});
+
+  console.log(
+    `Slack notification sent for sender ${senderEmail}.`,
+  );
 };
