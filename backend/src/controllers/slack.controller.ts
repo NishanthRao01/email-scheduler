@@ -92,3 +92,33 @@ export const slackCallbackController: RequestHandler = async (
     next(error);
   }
 };
+
+export const slackDisconnectController: RequestHandler = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const { prisma } = await import("../lib/prisma.ts");
+
+    await prisma.slackConnection.deleteMany({
+      where: {
+        userId: req.user.userId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Slack disconnected successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

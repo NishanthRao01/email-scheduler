@@ -70,6 +70,25 @@ export const authenticateWithGoogle = async (
     });
   }
 
+  const existingSender = await prisma.sender.findUnique({
+    where: {
+      userId_email: {
+        userId: user.id,
+        email: user.email,
+      },
+    },
+  });
+
+  if (!existingSender) {
+    await prisma.sender.create({
+      data: {
+        userId: user.id,
+        email: user.email,
+        name: user.name || "Google User",
+      },
+    });
+  }
+
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!jwtSecret) {

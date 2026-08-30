@@ -99,14 +99,35 @@ export const sendHourlyLimitNotification = async ({
     connection.accessToken,
   );
 
-  await slack.chat.postMessage({
-  channel: process.env.SLACK_NOTIFICATION_CHANNEL_ID!,
-  text:
-    `⚠️ Hourly email limit reached for sender ` +
-    `${senderEmail}. Remaining emails will be retried in the next hour.`,
-});
+  const channelId = process.env.SLACK_NOTIFICATION_CHANNEL_ID || "C0BTLB7JBRU";
 
-  console.log(
-    `Slack notification sent for sender ${senderEmail}.`,
-  );
+  try {
+    try {
+      await slack.conversations.join({ channel: channelId });
+      console.log(`Slack bot successfully joined channel ${channelId}`);
+    } catch (joinErr) {
+      console.log(`Auto-join channel ${channelId} failed, checking message post:`, joinErr);
+    }
+
+    const postResponse = await slack.chat.postMessage({
+      channel: channelId,
+      text:
+        `⚠️ Hourly email limit reached for sender ` +
+        `${senderEmail}. Remaining emails will be retried in the next hour.`,
+    });
+
+    if (!postResponse.ok) {
+      throw new Error(postResponse.error || "Failed to post Slack message");
+    }
+
+    console.log(
+      `Slack notification sent for sender ${senderEmail}.`,
+    );
+  } catch (error: any) {
+    console.error(`Slack chat.postMessage failed for channel ${channelId}:`, error);
+    if (error.data?.error === "not_in_channel") {
+      throw new Error(`Slack Bot is not in channel ${channelId}. Please invite the Bot using "/invite" inside the Slack channel.`);
+    }
+    throw error;
+  }
 };

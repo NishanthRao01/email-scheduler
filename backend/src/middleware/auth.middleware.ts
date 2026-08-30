@@ -21,7 +21,11 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const authorization = req.headers.authorization;
+  let authorization = req.headers.authorization;
+
+  if (!authorization && req.query.token && typeof req.query.token === "string") {
+    authorization = `Bearer ${req.query.token}`;
+  }
 
   if (!authorization) {
     return res.status(401).json({

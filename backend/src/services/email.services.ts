@@ -52,3 +52,80 @@ for (const email of campaign.emails) {
 
   return campaign;
 };
+
+
+export const getScheduledEmails = async (userId: string) => {
+  return prisma.email.findMany({
+    where: {
+      campaign: {
+        userId,
+      },
+      status: "PENDING",
+    },
+    select: {
+      id: true,
+      recipient: true,
+      subject: true,
+      body: true,
+      scheduledAt: true,
+      status: true,
+      sender: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      scheduledAt: "asc",
+    },
+  });
+};
+
+export const getSentEmails = async (userId: string) => {
+  return prisma.email.findMany({
+    where: {
+      campaign: {
+        userId,
+      },
+      status: {
+        in: ["SENT", "FAILED"],
+      },
+    },
+    select: {
+      id: true,
+      recipient: true,
+      subject: true,
+      body: true,
+      sentAt: true,
+      status: true,
+      sender: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      sentAt: "desc",
+    },
+  });
+};
+
+export const getSenders = async (userId: string) => {
+  return prisma.sender.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+    },
+    orderBy: {
+      email: "asc",
+    },
+  });
+};
