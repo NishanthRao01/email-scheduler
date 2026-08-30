@@ -29,9 +29,11 @@ export const googleCallbackController = async (
 
   const result = await authenticateWithGoogle(code);
 
+  const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
+
   return res.redirect(
-  `http://localhost:5173/auth/callback?token=${encodeURIComponent(result.token)}`,
-);
+    `${frontendUrl}/auth/callback?token=${encodeURIComponent(result.token)}`,
+  );
 };
 
 export const googleMeController = async (

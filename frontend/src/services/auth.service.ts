@@ -1,12 +1,11 @@
-import { api } from "./api";
+import { api, API_BASE_URL } from "./api";
 import type { AuthUser } from "../types/auth";
 
 const AUTH_TOKEN_KEY = "authToken";
 const AUTH_USER_KEY = "authUser";
 
 export const startGoogleLogin = () => {
-  window.location.href =
-    "http://localhost:5000/api/auth/google";
+  window.location.href = `${API_BASE_URL}/api/auth/google`;
 };
 
 export const saveAuthSession = (
@@ -59,7 +58,7 @@ export const getCurrentUser = async (): Promise<AuthUser> => {
 };
 
 export const getSlackConnectUrl = (token: string): string => {
-  return `http://localhost:5000/api/auth/slack/connect?token=${encodeURIComponent(token)}`;
+  return `${API_BASE_URL}/api/auth/slack/connect?token=${encodeURIComponent(token)}`;
 };
 
 export const disconnectSlack = async (): Promise<void> => {

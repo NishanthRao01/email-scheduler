@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "dev:worker": "tsx watch src/worker.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/server.js",
     "start:worker": "node dist/worker.js",
+    "migrate:deploy": "prisma migrate deploy",
     "seed": "tsx prisma/seed.ts",
     "test:rate-limit": "tsx src/tests/rate-limiter.test.ts",
     "test:delay-limit": "tsx src/tests/delay-limiter.test.ts"
